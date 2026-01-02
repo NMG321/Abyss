@@ -25,6 +25,10 @@ public class OreTagRenderer {
             Blocks.ANCIENT_DEBRIS
     );
 
+    public BlockESP() {
+        super("Block ES[", "Xray basically", Category.RENDER);
+    }
+
     public static void init() {
         WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
             render(context.matrixStack());
