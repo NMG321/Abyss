@@ -1,81 +1,35 @@
-plugins {
-    id 'fabric-loom' version '1.13-SNAPSHOT'
-    id 'maven-publish'
-}
+# ===============================
+# Minecraft / Fabric versions
+# ===============================
 
-version = project.minecraft_version
-group = project.maven_group
+minecraft_version=1.21.11
 
-repositories {
-    mavenCentral()
-    maven { url "https://jitpack.io" }
-}
+# Fabric Loader (stable for 1.21.x)
+loader_version=0.15.11
 
-loom {
-    accessWidenerPath = file("src/main/resources/oyvey.accesswidener")
-}
+# Fabric API (must match MC version)
+fabric_version=0.140.2+1.21.11
 
-dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    // Fabric API
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+# ===============================
+# Mod info
+# ===============================
 
-    include implementation("com.github.cattyngmd.catformat:catformat-core:${project.catformat_version}")
-    include modImplementation("com.github.cattyngmd.catformat:catformat-fabric:${project.catformat_version}")
-}
+maven_group=me.alpha432
+archives_base_name=Abyss
 
-processResources {
-    inputs.property "version", project.version
-    inputs.property "minecraft_version", project.minecraft_version
-    inputs.property "loader_version", project.loader_version
-    filteringCharset "UTF-8"
 
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version,
-                "minecraft_version": project.minecraft_version,
-                "loader_version": project.loader_version
-    }
-}
+# ===============================
+# Dependencies
+# ===============================
 
-def targetJavaVersion = 21
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = "UTF-8"
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        it.options.release = targetJavaVersion
-    }
-}
+# CatFormat (leave as-is unless it breaks)
+catformat_version=1.2.6
 
-java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
 
-    // (was: archivesBaseName = project.archives_base_name)
-    withSourcesJar()
-}
+# ===============================
+# Gradle settings
+# ===============================
 
-base {
-    archivesName = project.archives_base_name
-}
-
-jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archives_base_name}" }
-    }
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
-
-    repositories {
-        // Add publish targets here if needed
-    }
-}
+org.gradle.jvmargs=-Xmx4G
+org.gradle.parallel=true
